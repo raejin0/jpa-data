@@ -8,6 +8,8 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import study.datajpa.entity.Member;
 
+import java.util.List;
+
 @SpringBootTest // spring bean을 injection 받아서 쓸 거
 @Transactional // 기본적으로 테스트 후 rollback 시키기 때문에 qeury log도 남지 않는다.
 @Rollback(false)
@@ -43,9 +45,9 @@ class MemberJpaRepositoryTest {
 		assertThat(findMember2).isEqualTo(member2);
 
 		// dirty checking test
-		findMember1.changeUserName("member!!!!");
+		//findMember1.changeUserName("member!!!!");
 
-		/*// list inquiry verification
+		// list inquiry verification
 		List<Member> all = memberJpaRepository.findAll();
 		assertThat(all.size()).isEqualTo(2);
 
@@ -58,6 +60,21 @@ class MemberJpaRepositoryTest {
 		memberJpaRepository.delete(member2);
 
 		long deletedCount = memberJpaRepository.count();
-		assertThat(deletedCount).isEqualTo(0);*/
+		assertThat(deletedCount).isEqualTo(0);
+	}
+
+	@Test
+	public void findByUsernameAndAgeGreaterThen() {
+		Member m1 = new Member("AAA", 10);
+		Member m2 = new Member("AAA", 20);
+
+		memberJpaRepository.save(m1);
+		memberJpaRepository.save(m2);
+
+		List<Member> result = memberJpaRepository.findByUsernameAndAgeGreaterThan("AAA", 15);
+
+		assertThat(result.get(0).getUsername()).isEqualTo("AAA");
+		assertThat(result.get(0).getAge()).isEqualTo(20);
+		assertThat(result.size()).isEqualTo(1);
 	}
 }
