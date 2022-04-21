@@ -11,8 +11,6 @@ import study.datajpa.entity.Member;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 @Transactional
 @Rollback(false)
@@ -93,6 +91,6 @@ class MemberRepositoryTest {
 
 	@Test
 	public void findHelloByTest() {
-		List<Member> helloBy = memberRepository.findHelloBy();
+		List<Member> helloBy = memberRepository.findTop3HelloBy();
 	}
 }

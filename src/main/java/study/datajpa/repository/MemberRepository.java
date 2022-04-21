@@ -9,5 +9,5 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
 	List<Member> findByUsernameAndAgeGreaterThan(String username, int age);
 
-	List<Member> findHelloBy();
+	List<Member> findTop3HelloBy();
 }
