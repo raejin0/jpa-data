@@ -6,8 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
+import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
+import study.datajpa.entity.Team;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +20,7 @@ import java.util.Optional;
 class MemberRepositoryTest {
 
 	@Autowired MemberRepository memberRepository;
+	@Autowired TeamRepository teamRepository;
 
 	@Test
 	public void testMember() {
@@ -78,7 +82,6 @@ class MemberRepositoryTest {
 	public void findByUsernameAndAgeGreaterThen() {
 		Member m1 = new Member("AAA", 10);
 		Member m2 = new Member("AAA", 20);
-
 		memberRepository.save(m1);
 		memberRepository.save(m2);
 
@@ -93,4 +96,105 @@ class MemberRepositoryTest {
 	public void findHelloByTest() {
 		List<Member> helloBy = memberRepository.findTop3HelloBy();
 	}
+
+	@Test
+	public void namedQueryTest() {
+		Member m1 = new Member("AAA", 10);
+		Member m2 = new Member("BBB", 20);
+		memberRepository.save(m1);
+		memberRepository.save(m2);
+
+		List<Member> result = memberRepository.findByUsername("AAA");
+		Member member = result.get(0);
+
+		assertThat(member.getUsername()).isEqualTo("AAA");
+	}
+
+	@Test
+	public void testQuery() {
+		Member m1 = new Member("AAA", 10);
+		Member m2 = new Member("AAA", 20);
+		memberRepository.save(m1);
+		memberRepository.save(m2);
+
+		List<Member> result = memberRepository.findUser("AAA", 10);
+		Member member = result.get(0);
+
+		assertThat(member).isEqualTo(m1);
+	}
+
+	@Test
+	public void findUsernaeListTest() {
+		Member m1 = new Member("AAA", 10);
+		Member m2 = new Member("BBB", 20);
+		memberRepository.save(m1);
+		memberRepository.save(m2);
+
+		List<String> result = memberRepository.findUsernameList();
+
+		for (String s : result) {
+			System.out.println("s = " + s); /* 실무에서는 다 assert로 테스트 */
+		}
+	}
+
+	@Test
+	public void findMemberDtoTest() {
+		Team teamA = new Team("teamA");
+		teamRepository.save(teamA);
+
+		Member m1 = new Member("AAA", 10);
+		m1.changeTeam(teamA);
+		memberRepository.save(m1);
+
+		List<MemberDto> memberDto = memberRepository.findMemberDto();
+
+		for (MemberDto dto : memberDto) {
+			System.out.println("dto = " + dto);
+		}
+	}
+
+
+	// collection parameter binding
+	@Test
+	public void findByNamesTest() {
+		Member m1 = new Member("AAA", 10);
+		Member m2 = new Member("BBB", 20);
+		memberRepository.save(m1);
+		memberRepository.save(m2);
+
+		List<Member> result = memberRepository.findByNames(Arrays.asList("AAA", "BBB"));
+
+		for (Member member : result) {
+			System.out.println("member = " + member);
+		}
+	}
+
+	// return type
+	@Test
+	public void returnTypeTest() {
+		Member m1 = new Member("AAA", 10);
+		Member m2 = new Member("BBB", 20);
+		memberRepository.save(m1);
+		memberRepository.save(m2);
+
+		/*  return null if there's no data ( spring data jpa)
+		* in case pure jpa, no result exception occurs
+		* The null checking conditional is a bad code.
+		* */
+		Member findMember = memberRepository.findMemberByUsername("AAA");
+		//if(findMember != null) { } // bad code!!!
+
+		/*  USE OPTIONAL to find a single row.
+		* return Optional.empty if there's no data -> how to deal with it?
+		* Exception occurs if there are more than one row. */
+		Optional<Member> option = memberRepository.findOptionByUsername("AAA");
+
+		/* return empty collection if there's no data */
+		List<Member> aaa = memberRepository.findListByUsername("AAA");
+
+		System.out.println("aaa = " + aaa);
+		System.out.println("option = " + option);
+		System.out.println("findMember = " + findMember);
+	}
+
 }

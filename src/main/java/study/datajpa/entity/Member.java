@@ -7,7 +7,15 @@ import javax.persistence.*;
 @Entity
 @Getter
 //@NoArgsConstructor(access = AccessLevel.PROTECTED) // default constructor
-@ToString(of = {"id", "username", "age"}) // team을 포함하고, Team class 에서도 연관된 필드까지 toString 할 경우 호출 무한루프
+
+/* DO NOT include related entity field. It leads to infinite loop
+ * team을 포함하고, Team class 에서도 연관된 필드까지 toString 할 경우 호출 무한루프
+ */
+@ToString(of = {"id", "usernam", "age"})
+@NamedQuery(
+		name="Member.findByUsername",
+		query="select m from Member m where m.username =:username"
+)
 public class Member {
 
 	@Id @GeneratedValue
