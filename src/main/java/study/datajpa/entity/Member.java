@@ -16,6 +16,7 @@ import javax.persistence.*;
 		name="Member.findByUsername",
 		query="select m from Member m where m.username =:username"
 )
+@NamedEntityGraph(name = "Member.all", attributeNodes = @NamedAttributeNode("team"))
 public class Member {
 
 	@Id @GeneratedValue
@@ -24,7 +25,7 @@ public class Member {
 	private String username;
 	private int age;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY) // proxy로 만들어 놓고 호출 시 가져와서 초기화함
 	@JoinColumn(name = "team_id")
 	private Team team;
 
