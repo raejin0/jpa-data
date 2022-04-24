@@ -27,6 +27,11 @@ class MemberRepositoryTest {
 
 	@Autowired MemberRepository memberRepository;
 	@Autowired TeamRepository teamRepository;
+	@Autowired MemberQueryRepository memberQueryRepository;
+
+	/*public MemberRepositoryTest(MemberQueryRepository memberQueryRepository) {
+		this.memberQueryRepository = memberQueryRepository;
+	}*/
 
 	/*  Same transaction, same EntityManager
 	* It is the same EntityManager used in two repositories above. */
@@ -410,6 +415,7 @@ class MemberRepositoryTest {
 		findMember.changeUserName("member2");
 	}
 
+	// JPA hint
 	@Test
 	public void lock() {
 		// given
@@ -422,5 +428,19 @@ class MemberRepositoryTest {
 		List<Member> findMember = memberRepository.findLockByUsername("member1");
 	}
 
+	// Implementing a custom repository
+	@Test
+	public void callCuston() {
+		List<Member> result = memberRepository.findMemberCustom();
+	}
+
+	//
+	@Test
+	public void test() {
+		List<Member> result = memberQueryRepository.findAllMembers();
+		for (Member member : result) {
+			System.out.println("member = " + member);
+		}
+	}
 
 }
