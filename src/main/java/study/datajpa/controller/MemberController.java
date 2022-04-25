@@ -53,7 +53,7 @@ public class MemberController {
                 //.map(member -> new MemberDto(member)); // DTO can see entity. However an entity must not see dto.
     }
 
-    @PostConstruct
+    // @PostConstruct
     public void init() {
         // memberRepository.save(new Member("userA")); // domain class converter
 
